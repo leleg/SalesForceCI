@@ -1,0 +1,141 @@
+<apex:page >
+<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.2.0/angular.min.js"></script>
+<script src="//code.jquery.com/jquery-1.11.2.min.js"></script>
+<script src="//code.jquery.com/jquery-migrate-1.2.1.min.js"></script>
+ 
+<script>
+var app = angular.module('myApp', []);
+
+app.controller('clusterController', function ($scope) {
+
+    var uid = 0;
+    $scope.clusters = [];
+
+    $scope.environments = [
+        {name: 'DEV'},
+        {name: 'PROD'},
+        {name: 'QA'},
+        {name: 'Linux_Dev'}
+    ];
+
+    $scope.select = {};
+    $scope.select.selectedEnvironment = $scope.environments[0];
+    $scope.select.buttonLabel = 'Save Cluster';
+    $scope.select.showCancel = false;
+
+    //add new cluster
+    $scope.saveNewClust = function () {
+        if ($scope.select.id == undefined) {
+            //if this is new cluster, add it in clusters array
+            $scope.clusters.push({
+                id: uid++,
+                cluster: $scope.select.cluster,
+                environment: $scope.select.selectedEnvironment
+            });
+        } else {
+            //for existing cluster, find this cluster using id and update it.
+            $scope.clusters[$scope.select.id].cluster = $scope.select.cluster;
+            $scope.select.id = undefined;
+            $scope.select.buttonLabel = 'Save Cluster';
+            $scope.select.showCancel = false;
+        };
+        //clear the add clusters form
+        $scope.select.cluster = "";
+        $scope.select.selectedEnvironment = $scope.environments[0];
+    };
+
+    //delete cluster
+    $scope.remove = function (id) {
+        //search cluster with given id and delete it
+        for (i in $scope.clusters) {
+            if ($scope.clusters[i].id == id) {
+                confirm("This Cluster will get deleted permanently");
+                $scope.clusters.splice(i, 1);
+                $scope.clust = {};
+            }
+        }
+    };
+
+    $scope.cancelUpdate = function () {
+        $scope.select.buttonLabel = 'Save Cluster';
+        $scope.select.showCancel = false;
+        $scope.select.id = undefined;
+        $scope.select.cluster = "";
+        $scope.select.selectedEnvironment = $scope.environments[0];
+    };
+});
+</script>
+
+  <div ng-controller="clusterController" class="menuContent">
+    <div class="maincontent">
+        <div class="article">
+            <form>
+                <section>
+                    <!--  Environment -->
+                    <div class="col-md-6">
+                        <label>Environment:</label>
+                        <span on="select.showCancel">
+                            <select ng-switch-when="true" disabled='true' ng-model="select.selectedEnvironment" class="form-control"
+                                    ng-options="environment.name for environment in environments">
+                                <option value='' disabled='true' style='display:none;'>
+                                    Select Environment
+                                </option>
+                            </select>
+                            <select ng-switch-default='true' ng-model="select.selectedEnvironment" class="form-control"
+                                    ng-options="environment.name for environment in environments">
+                                <option value='' disabled='true' style='display:none;'>
+                                    Select Environment
+                                </option>
+                            </select>
+                        </span>
+
+                    </div>
+
+                    <!--  cluster Name -->
+                    <div class="col-md-6">
+                        <label>Cluster Name:</label>
+                        <input type="text" class="form-control" name="clusterName" placeholder="Cluster"
+                               ng-model="select.cluster" required='true' />
+                        <br/>
+                        <input type="hidden" ng-model="clust.id" ></input>
+                    </div>
+                </section>
+                <!-- submit button -->
+                <section class="col-md-12">
+                    <button type="button" class="btn btn-default pull-right" ng-click="saveNewClust()">{{select.buttonLabel}}
+                    </button>
+                    <button ng-show="select.showCancel" type="button" class="btn btn-default pull-right" ng-click="cancelUpdate()">Cancel update
+                    </button>
+                </section>
+            </form>
+        </div>
+        <!--  table -->
+        <div class="article">
+            <table class="table table-bordered table-striped">
+                <tr>
+                    <th colspan="4">
+                        <div class="pull-left">Cluster Info</div>
+                    </th>
+                </tr>
+                <tr>
+                    <th>#</th>
+                    <th>Environment</th>
+                    <th>Cluster</th>
+                    <th>Edit</th>
+                </tr>
+                <tr ng-repeat="clust in clusters">
+                    <td>{{}}</td>
+                    <td>{{clust.environment.name}}</td>
+                    <td>{{clust.cluster}}</td>
+                    <td>
+                        <a href="" ng-click="select.selectedEnvironment = clust.environment; select.cluster = clust.cluster; select.id = clust.id; select.buttonLabel='Update Cluster'; select.showCancel = true" title="Edit"><span class="glyphicon glyphicon-edit"></span>Edit</a>
+                        |
+                        <a href="" ng-click="remove(clust.id)" title="Delete"><span
+                                class="glyphicon glyphicon-trash"></span>Delete</a>
+                    </td>
+                </tr>
+            </table>
+        </div>
+    </div>
+</div>
+</apex:page>

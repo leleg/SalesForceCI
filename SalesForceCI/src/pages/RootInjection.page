@@ -1,0 +1,147 @@
+<apex:page showHeader="false">
+    <link href="{!URLFOR($Resource.PureCSS, '/js/vendor/pure-css/pure-min.css')}" rel="stylesheet"></link>
+    <link href="{!URLFOR($Resource.PureCSS, '/css/layouts/side-menu.css')}" rel="stylesheet"></link>
+    <link href="{!URLFOR($Resource.PureCSS, '/css/layouts/grids-responsive-min.css')}" rel="stylesheet"></link>
+    <link href="{!URLFOR($Resource.PureCSS, '/js/vendor/angular-treeview/css/tree-control.css')}" rel="stylesheet"></link>
+    <script src="{!URLFOR($Resource.jQueryAPI, '/js/jquery-1.9.1.js')}"></script>
+    <script src="{!URLFOR($Resource.jQueryAPI, '/js/jquery-ui-1.10.2.custom.min.js')}"></script>
+    <script src="{!URLFOR($Resource.jQueryAPI, '/js/jquery.blockUI.js')}"></script>
+    <script src="{!URLFOR($Resource.jQueryAPI, '/js/noty/packaged/jquery.noty.packaged.js')}"></script>
+    <link src="{!URLFOR($Resource.jQueryAPI, '/css/bootstrap.min.css')}"></link>
+    <link src="{!URLFOR($Resource.jQueryAPI, '/css/bootstrap-responsive.min.css')}"></link>
+    <script src="{!URLFOR($Resource.QPRResources, 'js/vendor/angular/angular.js')}"></script>   
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />  
+    <style>
+        @import url(http://fonts.googleapis.com/css?family=Droid+Serif);
+            h2
+            {
+                text-align: center;
+                font-size: 24px;
+            }
+            hr
+            {
+                margin-bottom: 30px;
+            }
+            div.container
+            {
+                width: 960px;
+                height: 610px;
+                margin:50px auto;
+                font-family: 'Droid Serif', serif;
+                position:relative;
+            }
+            div.main
+            {
+                width: 320px;
+                float:left;
+                padding: 10px 55px 40px;
+                background-color: rgba(187, 255, 184, 0.65);
+                border: 15px solid white;
+                box-shadow: 0 0 10px;
+                border-radius: 2px;
+                font-size: 13px;
+            }
+            input[type=text],[type=password] 
+            {
+                width: 97.7%;
+                height: 34px;
+                padding-left: 5px;
+                margin-bottom: 20px;
+                margin-top: 8px;
+                box-shadow: 0 0 5px #00F5FF;
+                border: 2px solid #00F5FF;
+                color: #4f4f4f;
+                font-size: 16px;
+            }
+            label
+            {
+                color: #464646;
+                text-shadow: 0 1px 0 #fff;
+                font-size: 14px;
+                font-weight: bold;
+            }
+            #register 
+            {
+                font-size: 20px;
+                margin-top: 15px;
+                background: linear-gradient(#22abe9 5%, #36caf0 100%);
+                border: 1px solid #0F799E;
+                padding: 7px 35px;
+                color: white;
+                text-shadow: 0px 1px 0px #13506D;
+                font-weight: bold;
+                border-radius: 2px;
+                cursor: pointer;
+                width: 100%;
+            }
+            #register:hover
+            {
+                background: linear-gradient(#36caf0 5%, #22abe9 100%);
+            }
+    </style>
+    <script>       
+        var DirectiveModule = angular.module('DirectiveModule',[]);
+        DirectiveModule.directive('testDirective',function(){
+            var directive = {};
+            directive.scope = {
+                data: '=data'
+            };
+            directive.restrict = 'E';
+            directive.testData = 'Hello DirectiveModule';
+            directive.template = '<h2>Enter Details for next Form</h2><br/>\
+                    <label>Name :</label>\
+                    <input type="text" name="name" id="name" ng-model="data.name" />\
+                    <label>Address :</label>\
+                    <input type="text" name="add" id="add" ng-model="data.address" />\
+                    <label>Quantity :</label>\
+                    <input type="text" name="quantity" id="quantity" ng-model="data.quantity" />\
+                    <label>Price :</label>\
+                    <input type="text" name="price" id="price" ng-model="data.price" />\
+                    <input type="button" name="Save" id="save" value="Save" ng-click="Test();" data="data" />';
+            directive.controller = function($scope)
+            {
+                $scope.data = { name:'Kishor', address:'Vitekar', quantity:2, price: 20 };
+                $scope.Test = function()
+                {                   
+                    $('#payment').dialog({
+                    modal: true,
+                    draggable: false,
+                    resizable: false,
+                    position: ['center', 'top'],
+                    width: 400,
+                    buttons: {
+                        "OK": function() {
+                            $(this).dialog("close");
+                        }
+                    }
+                });
+                }
+            };
+            return directive;
+        });
+        
+        var  app2=angular.module('bottomApp',['DirectiveModule']);
+        app2.controller('BottomCtrl', function ($scope) {
+            $scope.PayBill = function()
+            {
+                $scope.total = $scope.data.quantity * $scope.data.price;
+                alert('Your bill Amount is: '+$scope.total);
+            }
+        });
+    </script>
+    
+    <div ng-app="bottomApp">
+        <div class="container" data-ng-controller="BottomCtrl" id="Order" >
+            <div class="main">
+                <form class="form" method="post" action="#">
+                    <test-directive data='data'></test-directive>
+                    <div style="display:none;background-color: whitesmoke;" id="payment">
+                        Thank you {{data.name}}
+                        <input type="button" value="Pay Bill" ng-click="PayBill()" />
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</apex:page>

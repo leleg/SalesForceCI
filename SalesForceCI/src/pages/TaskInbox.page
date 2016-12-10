@@ -1,0 +1,7 @@
+<apex:page showHeader="false" controller="Salesforce">
+<!-- Run Using https://c.ap1.visual.force.com/apex/GenericReport#/?obj=Charter__c&mapobject -->
+<c:GlobalResources Local="{!$CurrentPage.parameters.local}" Application_JS="salesforce.js,error-manager.js,taskinbox-app.js,trans-table.js" Application_CSS="enz-table.css,application.css"> </c:GlobalResources> 
+    <div ng-app="taskinboxapp" ng-controller="taskinboxctrl">
+      <get-listdetails objname="currentObj" queryfields="mapObject[currentObj].queryFields" type="type" pageheader="mapObject[currentObj].listHeader" tablefields="mapObject[currentObj].tableHeaders"></get-listdetails>
+   </div>
+</apex:page>

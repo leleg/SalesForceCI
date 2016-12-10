@@ -1,0 +1,12 @@
+<apex:page showHeader="false" controller="Salesforce">
+<!-- Run Using https://c.ap1.visual.force.com/apex/GenericReport#/?obj=Charter__c&mapobject -->
+<c:GlobalResources Local="{!$CurrentPage.parameters.local}" Application_JS="salesforce.js,error-manager.js,arc-report-table.js,arc-generic-ctrl.js" Application_CSS="enz-table.css,application.css"> </c:GlobalResources> 
+    <div ng-app="ang-mainmodule" ng-controller="ang-mainctrl">
+       <div class="maindiv" ng-if="type">
+         <get-listdetails newbtn="mapObject[currentObj].newBtn" pageheader="mapObject[currentObj].listHeader" objname="currentObj" sortorder="sortOrder" tablefields="mapObject[currentObj].tableHeaders" queryfields="mapObject[currentObj].queryFields" type="type"></get-listdetails>
+       </div>  
+       <div class="maindiv" ng-if="!type">
+         <get-reportdetails newbtn="mapReport[currentObj].newBtn" pageheader="mapReport[currentObj].listHeader" objname="currentObj" sortorder="sortOrder" tablefields="mapReport[currentObj].tableHeaders" queryfields="mapReport[currentObj].queryFields" conditionfield="mapReport[currentObj].conditionfield" projectid="projectid" type="type"></get-reportdetails >
+       </div>  
+   </div>
+</apex:page>

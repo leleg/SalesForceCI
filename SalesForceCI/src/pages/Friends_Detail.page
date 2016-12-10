@@ -1,0 +1,210 @@
+<apex:page showHeader="false" controller="FriendsController">
+
+    <link href="{!URLFOR($Resource.PureCSS, '/js/vendor/pure-css/pure-min.css')}" rel="stylesheet"></link>
+    <link href="{!URLFOR($Resource.PureCSS, '/css/layouts/side-menu.css')}" rel="stylesheet"></link>
+    <link href="{!URLFOR($Resource.PureCSS, '/css/layouts/grids-responsive-min.css')}" rel="stylesheet"></link>
+    <link href="{!URLFOR($Resource.PureCSS, '/js/vendor/angular-treeview/css/tree-control.css')}" rel="stylesheet"></link>
+
+    <script src="{!URLFOR($Resource.jQueryAPI, '/js/jquery-1.9.1.js')}"></script>
+    <script src="{!URLFOR($Resource.jQueryAPI, '/js/jquery-ui-1.10.2.custom.min.js')}"></script>
+    <script src="{!URLFOR($Resource.jQueryAPI, '/js/jquery.blockUI.js')}"></script>
+    <script src="{!URLFOR($Resource.jQueryAPI, '/js/noty/packaged/jquery.noty.packaged.js')}"></script>
+    <link src="{!URLFOR($Resource.jQueryAPI, '/css/bootstrap.min.css')}"></link>
+    <link src="{!URLFOR($Resource.jQueryAPI, '/css/bootstrap-responsive.min.css')}"></link>
+    <script src="{!URLFOR($Resource.QPRResources, 'js/vendor/angular/angular.js')}"></script>   
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />  
+
+    <script>
+           var app = angular.module('MyApp',[]);
+           app.controller('FriendDetailController', function($scope){
+                $scope.name = 'Kishor';
+                $scope.Friends = [];
+                $scope.ShowFriends = [];
+                $scope.EditedFriends = [];
+                $scope.ShowCount = 4;
+                $scope.TotalRecords = 0;
+
+                $scope.Move = function(index)
+                {   
+                    if(index < $scope.TotalRecords)
+                    $scope.Friends = [];
+                    for(count=index; count< $scope.ShowCount+parseInt(index);count++)
+                    {
+                        if(count < $scope.TotalRecords)
+                        $scope.Friends.push($scope.ShowFriends[count]);      
+                    }
+                    $scope.$apply();
+                }                
+                
+                $scope.Next = function()
+                {
+                    var index = $('table:last tr:nth-last-child(2) td:first').text();                    
+                    $scope.Move(index);                    
+                }
+
+                $scope.Prev = function()
+                {
+                    var index = $('table:last tr:nth-last-child(2) td:first').text();
+                    index = parseInt(index) - ($scope.ShowCount) - $('td[id*=index]').length;
+                    if(index>=0)
+                        $scope.Move(index); 
+                    else
+                        $scope.Move(0);                    
+                }
+                $scope.Last = function()
+                {
+                    if(($scope.TotalRecords - $scope.ShowCount) >= 0)
+                        $scope.Move($scope.TotalRecords - ($scope.ShowCount));
+                    else
+                        $scope.Move(0);
+                }
+
+                $scope.test = function()
+                {
+                    $scope.name = 'Kishor1';
+                    FriendsController.AllFriendsDetails($scope.name,function(result, event){
+                        $scope.name = 'Kishor2';
+                        $scope.TotalRecords = result.length;
+                        if(result)
+                        {
+                            $scope.name = result;
+                            for(var tempFriend in result)
+                            {
+                                    if(tempFriend !='remove')
+                                    {
+                                        var test = result[tempFriend];
+                                        test.index = parseInt(tempFriend)+1;
+                                        $scope.ShowFriends.push(test); 
+                                        if(tempFriend<($scope.ShowCount)) 
+                                        $scope.Friends.push(result[tempFriend]);              
+                                    }
+                            }
+                            $scope.$apply();
+                        }
+                    });
+                }  
+                $scope.test();
+                $scope.Edit = function(EditedFriend)             
+                {
+                    $scope.name = EditedFriend.Name;
+                    $scope.EditedFriends = angular.copy(EditedFriend);
+                    //$scope.$apply();
+                }
+                $scope.Save = function(EditedFriend)             
+                { 
+                    noty({
+                           layout: 'topCenter',
+                          text: 'Are you sure?',
+                          buttons: [
+                            {addClass: 'btn btn-primary', text: 'Ok', onClick: function($noty) {
+
+                                for(var x in $scope.Friends)
+                                            {
+                                              if($scope.Friends[x].Id == EditedFriend.Id)
+                                              {
+                                                  $scope.Friends[x] = EditedFriend;
+                                                  $scope.EditedFriends = angular.copy(EditedFriend);
+                                              }
+                                            }
+                                            $scope.$apply();
+                                $noty.close();        
+                              }
+                            },
+                            {addClass: 'btn btn-danger', text: 'Cancel', onClick: function($noty) {
+                                $noty.close();        
+                              }
+                            }
+                          ]
+                        });
+                }
+                $scope.Show = function(EditedFriend)
+                {
+                    alert(EditedFriend.Name);
+                    SetShowRecord(EditedFriend);
+                }
+           });
+    </script>
+    <style>
+        #MainBody td,th
+        {
+            width: 16%;
+        }
+        td input
+        {
+            width: 90%;
+            margin-right: 4%;
+            margin-left: 4%;
+        }
+    </style>
+    <apex:pageblock >
+        Friends Details
+        <div ng-app="MyApp" ng-controller="FriendDetailController" id="MainBody">
+            <div class="container">           
+                <table border="1" class="table">
+                    <thead>
+                        <tr>
+                            <th>Sr. No</th>
+                            <th>Salute</th>
+                            <th>First Name</th>
+                            <th>Last Name</th>
+                            <th> Mobile Number</th>
+                            <th>Address</th>
+                             <th>Action</th>
+                        </tr>
+                    </thead>
+                <tbody>
+                    <tr class="success">
+                        <td>{{EditedFriends.index}}</td>
+                        <td><input type="text" ng-model="EditedFriends.Salute__c" /></td>
+                        <td><input type="text" ng-model="EditedFriends.Name" /></td>
+                        <td><input type="text" ng-model="EditedFriends.Last_Name__c" /></td>
+                        <td><input type="text" ng-model="EditedFriends.Mobile_Number__c" /></td>
+                        <td><input type="text" ng-model="EditedFriends.Address__c" /></td>
+                        <td><a ng-click='Save(EditedFriends);' >Save</a> <a ng-click="Show(EditedFriends);"> Show</a></td>
+                    </tr>
+                </tbody>
+                </table>
+            </div>
+            
+            <br/>
+            <br/>
+            <div class="container">   
+                <table border="1">
+                    <tr>
+                        <th>Sr. No</th>
+                        <th>Salute</th>
+                        <th>First Name</th>
+                        <th>Last Name</th>
+                        <th> Mobile Number</th>
+                        <th>Address</th>
+                        <th>Action</th>
+                    </tr>
+                    
+                    <tr ng-repeat="x in Friends">
+                        <td id="index">{{x.index}}</td>
+                        <td>{{ x.Salute__c}}</td>
+                        <td>{{ x.Name }}</td>
+                        <td>{{ x.Last_Name__c}}</td>
+                        <td>{{ x.Mobile_Number__c}}</td>
+                        <td>{{ x.Address__c}}</td>
+                        <td><a ng-click='Edit(x);' >Edit</a> <a> Delete</a></td>
+                    </tr>
+                    <tr>
+                        <td></td>
+                        <td><input type="button" value="First" ng-click="Move(0);" /></td>
+                        <td><input type="button" value="Previous" ng-click="Prev();" /></td>
+                        <td><input type="button" value="Next" ng-click="Next();" /></td>
+                        <td><input type="button" value="Last" ng-click="Last();" /></td>
+                        <td></td>
+                    </tr>
+                </table>
+            </div>  
+        </div>
+    </apex:pageblock>
+    <apex:form >
+        <apex:actionFunction name="SetShowRecord" action="{!SetShowRecord}">
+            <apex:param name="param1" assignTo="{!ShowFriend}" value="" />
+        </apex:actionFunction>
+    </apex:form>
+</apex:page>

@@ -1,0 +1,13 @@
+<apex:page controller="FriendsController" showHeader="false">
+    <apex:pageBlock >
+        Account Details Report
+    </apex:pageBlock>
+    <hr/>
+    <apex:pageBlock >
+        <apex:pageBlockSection >
+            Account Details:
+        </apex:pageBlockSection>
+        Friend No <br/>
+        First Name: {!ShowFriend.Name}
+    </apex:pageBlock>
+</apex:page>

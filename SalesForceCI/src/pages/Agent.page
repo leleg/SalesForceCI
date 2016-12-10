@@ -1,0 +1,10 @@
+<apex:page showHeader="false" controller="Salesforce">
+<script language="javascript">
+            var application_js = 'application_js';
+</script>
+<!-- Run Using https://c.ap1.visual.force.com/apex/GenericReport#/?obj=Charter__c&mapobject -->
+<c:GlobalResources Local="{!$CurrentPage.parameters.local}" Application_JS="trans.js,trans-form.js,trans-form-table.js,trans-table.js,salesforce.js,error-manager.js" Application_CSS="trans-form-table.css,trans-form.css,trans-table.css"> </c:GlobalResources> 
+   <div ng-app="assignment" ng-controller="assignmentController">
+      <enzi-form-table></enzi-form-table>
+   </div>
+</apex:page>

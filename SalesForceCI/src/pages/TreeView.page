@@ -1,0 +1,79 @@
+<apex:page showHeader="false" standardStylesheets="false">    
+    <meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Tree View Example</title>
+    
+    <link href="{!URLFOR($Resource.jQueryAPI, '/css/redmond/jquery-ui-1.10.2.custom.min.css')}" rel="stylesheet"></link>
+    <link href="{!URLFOR($Resource.QPRResources, '/js/vendor/pure-css/pure-min.css')}" rel="stylesheet"></link>
+    <link href="{!URLFOR($Resource.QPRResources, '/css/layouts/side-menu.css')}" rel="stylesheet"></link>
+    <link href="{!URLFOR($Resource.QPRResources, '/css/layouts/grids-responsive-min.css')}" rel="stylesheet"></link>
+    <link href="{!URLFOR($Resource.QPRResources, '/js/vendor/angular-treeview/css/tree-control.css')}" rel="stylesheet"></link>
+    <link href="{!URLFOR($Resource.QPRResources, 'css/layouts/email.css')}" rel="stylesheet"></link>
+    <script src="{!URLFOR($Resource.jQueryAPI, '/js/jquery-1.9.1.js')}"></script>
+    <script src="{!URLFOR($Resource.jQueryAPI, '/js/jquery-ui-1.10.2.custom.min.js')}"></script>
+    <script src="{!URLFOR($Resource.jQueryAPI, '/js/jquery.blockUI.js')}"></script>
+    <script src="{!URLFOR($Resource.jQueryAPI, '/js/noty/packaged/jquery.noty.packaged.js')}"></script>
+    <script src="{!URLFOR($Resource.QPRResources, 'js/vendor/angular/angular.js')}"></script>
+    <script src="{!URLFOR($Resource.QPRResources, '/js/vendor/angular-treeview/js/angular-tree-control.js')}"></script>
+    <script src="{!URLFOR($Resource.jQueryAPI, 'js/ParseQuery.js')}"></script>
+
+    <script type="text/javascript">     
+        var ECOSQPR = angular.module('ECOSQPR', ['treeControl']);
+        var strQueryString = new PageQuery();
+        var strQPRId = "";
+        ECOSQPR.controller('QPRController', function($scope){
+            $scope.QPR = {};
+            $scope.TempQPR = {};
+            $scope.SelectedNode = {};
+            $scope.ShowObjectiveAction = false;
+            $scope.ECOSContacts = [];
+            $scope.ECOSContacts1 = [];
+             
+            $scope.SidebarMenuItems = [                               
+                { label: 'Part A', value: 'PartADetails', children: [
+                    { label: 'A1: Project Information', value: 'ProjectInformation', children: [] },
+                    { label: 'A2: Overview of Past Quarter', value: 'OverviewFollowup', children: [] },
+                    { label: 'A3: ARC Follow-Up', value: 'ARCFollowup', children: [] },
+                    { label: 'A4: Partnership Agreements', value: 'PartnershipAgreements', children: [
+                            { label: 'Partnership Developments Issues', value: 'PartnershipDevelopmentsIssue', children: [] }]},                
+                    { label: 'A5: Financial', value: 'FinancialA', children: [] }                    
+                ]},
+                { label: 'Performance Status', value: 'QPRRiskPerformance', children: [
+                    { label: 'Performance Status', value: 'RiskPerformanceStatus', children: [] }
+                ]},
+                { label: 'Part B', value: 'PartBDetails', children: [
+                    { label: 'B1: Project Information', value: 'ProjectInformation', children: [] },
+                    { label: 'B2: Current Quarter in Review', value: 'CurrentQuarterinReview', children: [] },
+                    { label: 'B3: Project Overview', value: 'ProjectOverview', children: [] },
+                    { label: 'B4: Financial', value: 'FinancialB', children: [] },
+                    { label: 'B5: Project Staffing', value: 'ProjectStaffing', children: [] },
+                    { label: 'B6: Analysis', value: 'GeneralOverview', children: [] },
+                    { label: 'B7: Work Plan for Next Quarter', value: 'WorkPlanDetails', children: [] },
+                    { label: 'B8: Cross Cutting Themes', value: 'CrossCuttingThemes', children: [] },
+                    { label: 'B9: Transition Strategy', value: 'TransitionStrategy', children: [] },
+                    { label: 'B10: Annexes', value: 'Annexes', children: [] }
+                ]},
+                { label: 'Part C', value: 'PartCDetails', children: [
+                    { label: 'C1: Project Information', value: 'ProjectInformation', children: [] },
+                    { label: 'C2: Comments', value: 'Comments', children: [] }
+                ]}
+            ]; });
+    </script>
+
+    <div ng-app="ECOSQPR" ng-controller="QPRController">
+            <div id="menu">
+                <div class="pure-menu pure-menu-open">
+                    <a class="pure-menu-heading" href="#" style="font-size: 92%;">Tree View Example</a>                
+                </div>
+                <treecontrol class="tree-light email-item pure-g"
+                                tree-model="SidebarMenuItems"
+                                on-selection=""
+                                order-by=""
+                                selected-node="SelectedNode">
+                                <div class="pure-u" id="treeMenu">
+                                    <h4 class="email-subject">{{node.label}}</h4>
+                                </div>
+                </treecontrol>
+            </div>    
+    </div>
+</apex:page>
